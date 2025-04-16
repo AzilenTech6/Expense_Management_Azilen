@@ -1,6 +1,6 @@
 import { get, post, put, del } from "./apiService";
 
-const CATEGORY_ENDPOINT = "/category";
+const CATEGORY_ENDPOINT = "/categories";
 
 export const getCategories = async () => {
   return await get(CATEGORY_ENDPOINT);

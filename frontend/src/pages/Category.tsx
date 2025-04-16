@@ -1,24 +1,73 @@
-import React, { useState } from "react";
-import { Table, Button, Space, Modal, Form, Input } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Space, Modal, Form, Input, message } from "antd";
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "../services/categoryService";
 
 const Category: React.FC = () => {
+  const [categories, setCategories] = useState<any[]>([]);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [form] = Form.useForm();
 
-  const dataSource = [
-    {
-      key: "1",
-      name: "Food",
-      description: "Expenses related to food and dining",
-    },
-    {
-      key: "2",
-      name: "Travel",
-      description: "Expenses related to travel and transportation",
-    },
-  ];
+  // Fetch categories from the API
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleAddCategory = () => {
+    setIsAddModalVisible(true);
+    form.resetFields();
+  };
+
+  const handleAddModalOk = async () => {
+    try {
+      const values = await form.validateFields();
+      await createCategory(values);
+      message.success("Category added successfully!");
+      setIsAddModalVisible(false);
+      fetchCategories(); // Refresh the category list
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
+
+  const handleEditModalOk = async () => {
+    try {
+      const values = await form.validateFields();
+      await updateCategory(selectedCategory.id, values);
+      message.success("Category updated successfully!");
+      setIsEditModalVisible(false);
+      fetchCategories(); // Refresh the category list
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
+
+  const handleDeleteModalOk = async () => {
+    try {
+      await deleteCategory(selectedCategory.id);
+      message.success("Category deleted successfully!");
+      setIsDeleteModalVisible(false);
+      fetchCategories(); // Refresh the category list
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
 
   const columns = [
     {
@@ -40,6 +89,7 @@ const Category: React.FC = () => {
             type="link"
             onClick={() => {
               setSelectedCategory(record);
+              form.setFieldsValue(record); // Populate form with selected category
               setIsEditModalVisible(true);
             }}
           >
@@ -60,22 +110,6 @@ const Category: React.FC = () => {
     },
   ];
 
-  const handleAddCategory = () => {
-    setIsAddModalVisible(true);
-  };
-
-  const handleAddModalOk = () => {
-    setIsAddModalVisible(false);
-  };
-
-  const handleEditModalOk = () => {
-    setIsEditModalVisible(false);
-  };
-
-  const handleDeleteModalOk = () => {
-    setIsDeleteModalVisible(false);
-  };
-
   return (
     <div>
       <Button
@@ -85,7 +119,7 @@ const Category: React.FC = () => {
       >
         Add Category
       </Button>
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={categories} columns={columns} rowKey="id" />
 
       {/* Add Category Modal */}
       <Modal
@@ -94,7 +128,7 @@ const Category: React.FC = () => {
         onOk={handleAddModalOk}
         onCancel={() => setIsAddModalVisible(false)}
       >
-        <Form layout="vertical">
+        <Form layout="vertical" form={form}>
           <Form.Item
             label="Name"
             name="name"
@@ -119,7 +153,7 @@ const Category: React.FC = () => {
         onOk={handleEditModalOk}
         onCancel={() => setIsEditModalVisible(false)}
       >
-        <Form layout="vertical" initialValues={selectedCategory}>
+        <Form layout="vertical" form={form}>
           <Form.Item
             label="Name"
             name="name"

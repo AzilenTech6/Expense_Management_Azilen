@@ -2,10 +2,29 @@ import axios from "axios";
 
 const API_BASE_URL = "https://fine-cub-mutually.ngrok-free.app"; // Replace with your API base URL
 
+// Create an Axios instance
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// Add a request interceptor to include the Authorization header
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Generic GET request
 export const get = async (endpoint: string, params?: any) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}${endpoint}`, { params });
+    const response = await apiClient.get(endpoint, { params });
     return response.data;
   } catch (error: any) {
     handleError(error);
@@ -15,7 +34,7 @@ export const get = async (endpoint: string, params?: any) => {
 // Generic POST request
 export const post = async (endpoint: string, data: any) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}${endpoint}`, data);
+    const response = await apiClient.post(endpoint, data);
     return response.data;
   } catch (error: any) {
     handleError(error);
@@ -25,7 +44,7 @@ export const post = async (endpoint: string, data: any) => {
 // Generic PUT request
 export const put = async (endpoint: string, data: any) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}${endpoint}`, data);
+    const response = await apiClient.put(endpoint, data);
     return response.data;
   } catch (error: any) {
     handleError(error);
@@ -35,7 +54,7 @@ export const put = async (endpoint: string, data: any) => {
 // Generic DELETE request
 export const del = async (endpoint: string) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}${endpoint}`);
+    const response = await apiClient.delete(endpoint);
     return response.data;
   } catch (error: any) {
     handleError(error);
