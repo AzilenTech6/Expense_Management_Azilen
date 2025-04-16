@@ -5,41 +5,50 @@ import Dashboard from "./pages/Dashboard";
 import Budget from "./pages/Budget";
 import Category from "./pages/Category";
 import Expense from "./pages/Expense";
-
-const { Header, Content, Footer } = Layout;
+import Login from "./pages/Login";
+import MainLayout from "./layouts/MainLayout";
 
 const App: React.FC = () => {
   return (
     <Router>
-      <Layout>
-        <Header>
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1">
-              <a href="/">Dashboard</a>
-            </Menu.Item>
-            <Menu.Item key="2">
-              <a href="/budget">Budget</a>
-            </Menu.Item>
-            <Menu.Item key="3">
-              <a href="/category">Category</a>
-            </Menu.Item>
-            <Menu.Item key="4">
-              <a href="/expense">Expense</a>
-            </Menu.Item>
-          </Menu>
-        </Header>
-        <Content style={{ padding: "50px", minHeight: "80vh" }}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/budget" element={<Budget />} />
-            <Route path="/category" element={<Category />} />
-            <Route path="/expense" element={<Expense />} />
-          </Routes>
-        </Content>
-        <Footer style={{ textAlign: "center" }}>
-          React App ©2023 Created with Ant Design
-        </Footer>
-      </Layout>
+      <Routes>
+        {/* Routes with MainLayout */}
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/budget"
+          element={
+            <MainLayout>
+              <Budget />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/category"
+          element={
+            <MainLayout>
+              <Category />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/expense"
+          element={
+            <MainLayout>
+              <Expense />
+            </MainLayout>
+          }
+        />
+
+        {/* Login Route without MainLayout */}
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </Router>
   );
 };
