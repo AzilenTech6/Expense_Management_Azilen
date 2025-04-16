@@ -1,9 +1,19 @@
 import React from "react";
-import { Form, Input, Button, Card } from "antd";
+import { Form, Input, Button, Card, message } from "antd";
+import { login } from "../services/authService";
 
 const Login: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: { email: string; password: string }) => {
+    try {
+      const response = await login(values);
+      message.success(`Welcome, ${response.user.name}!`);
+      // Save the token to localStorage or context
+      localStorage.setItem("token", response.token);
+      // Redirect to the dashboard
+      window.location.href = "/";
+    } catch (error: any) {
+      message.error(error.message);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
