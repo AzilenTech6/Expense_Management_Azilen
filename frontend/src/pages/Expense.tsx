@@ -9,6 +9,7 @@ import {
   DatePicker,
   Select,
 } from "antd";
+import moment from "moment"; // Import moment
 
 const { Option } = Select;
 
@@ -165,13 +166,22 @@ const Expense: React.FC = () => {
       </Modal>
 
       {/* Edit Expense Modal */}
+      {/* Edit Expense Modal */}
       <Modal
         title="Edit Expense"
         visible={isEditModalVisible}
         onOk={handleEditModalOk}
         onCancel={() => setIsEditModalVisible(false)}
       >
-        <Form layout="vertical" initialValues={selectedExpense}>
+        <Form
+          layout="vertical"
+          initialValues={{
+            ...selectedExpense,
+            expenseDate: selectedExpense?.expenseDate
+              ? moment(selectedExpense.expenseDate) // Convert to moment object
+              : null,
+          }}
+        >
           <Form.Item
             label="Name"
             name="name"
