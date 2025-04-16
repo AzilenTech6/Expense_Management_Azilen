@@ -8,7 +8,7 @@ export interface LoginPayload {
 }
 
 export interface LoginResponse {
-  token: string;
+  access_token: string;
   user: {
     id: string;
     name: string;
@@ -19,6 +19,7 @@ export interface LoginResponse {
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, payload);
+    console.log("Login response:", response); // Log the response data
     return response.data;
   } catch (error: any) {
     if (error.response) {
