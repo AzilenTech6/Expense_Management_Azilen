@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, Menu } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Header, Content, Footer } = Layout;
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+
+  // Check if the user is logged in
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/login"); // Redirect to login if not logged in
+    }
+  }, [isLoggedIn, navigate]);
+
+  // If the user is not logged in, don't render the layout
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
     <Layout>
       {/* Header */}
