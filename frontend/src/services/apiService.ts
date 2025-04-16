@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://fine-cub-mutually.ngrok-free.app"; // Replace with your API base URL
+const API_BASE_URL = "http://localhost:3001"; // Replace with your API base URL
 
 // Create an Axios instance
 const apiClient = axios.create({
